@@ -2,7 +2,7 @@ import axios from 'axios';
 import { ApiResponse } from '../../types';
 
 abstract class ApiStrategy {
-    protected baseUrl = 'http://0.0.0.0:3000/api/v1';
+  protected baseUrl = import.meta.env.VITE_BACKEND_BASE_URL;
   abstract execute(id?: string): Promise<any>;
 }
 
