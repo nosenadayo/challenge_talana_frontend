@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: frontend
-        image: your-registry/talana-frontend:latest
+        image: ghcr.io/nosenadayo/challenge_talana_frontend:latest
         ports:
         - containerPort: 80
         env:
