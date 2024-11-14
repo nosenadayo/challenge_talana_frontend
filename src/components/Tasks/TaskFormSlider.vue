@@ -56,13 +56,21 @@
               <div class="field">
                 <label class="label">Habilidades requeridas</label>
                 <div class="control">
-                  <div class="buttons are-small">
+                  <div v-if="skillStore.loading" class="has-text-centered">
+                    <span class="icon is-large">
+                      <i class="fas fa-spinner fa-pulse"></i>
+                    </span>
+                  </div>
+                  <div v-else-if="skillStore.error" class="notification is-danger is-light">
+                    {{ skillStore.error }}
+                  </div>
+                  <div v-else class="buttons are-small">
                     <button 
-                      v-for="skill in availableSkills"
+                      v-for="skill in skillStore.skills"
                       :key="skill.id"
                       type="button"
-                      class="button"
-                      :class="{ 'is-primary': isSkillSelected(skill.id) }"
+                      class="button is-purple"
+                      :class="{ 'is-light': !isSkillSelected(skill.id) }"
                       @click="toggleSkill(skill.id)"
                     >
                       {{ skill.name }}
@@ -104,6 +112,7 @@
 import { ref, computed, watch, onMounted } from 'vue'
 import { format } from 'date-fns'
 import { useTaskStore } from '../../stores/taskStore'
+import { useSkillStore } from '../../stores/skillStore'
 
 const props = defineProps<{
   isOpen: boolean,
@@ -116,13 +125,8 @@ const emit = defineEmits<{
 }>()
 
 const taskStore = useTaskStore()
+const skillStore = useSkillStore()
 const loading = ref(false)
-
-const availableSkills = ref([
-  { id: 1, name: 'Programación' },
-  { id: 6, name: 'Frontend' },
-  { id: 7, name: 'Backend' }
-])
 
 const formData = ref({
   title: '',
@@ -199,11 +203,19 @@ watch(() => props.defaultDate, (newDate) => {
     formData.value.due_date = format(newDate, 'yyyy-MM-dd')
   }
 })
+
+// Cargar habilidades cuando se monta el componente
+onMounted(async () => {
+  try {
+    await skillStore.fetchSkills()
+    console.log('Skills loaded:', skillStore.skills) // Para debug
+  } catch (error) {
+    console.error('Error loading skills:', error)
+  }
+})
 </script>
 
 <style lang="scss" scoped>
-@import '../../assets/styles/_variables.scss';
-
 .modal-wrapper {
   position: fixed;
   top: 0;
@@ -282,14 +294,84 @@ watch(() => props.defaultDate, (newDate) => {
   display: flex;
   flex-wrap: wrap;
   gap: 0.5rem;
+  margin-bottom: 1rem;
+
+  .button {
+    margin: 0 !important;
+    transition: all 0.2s ease;
+    min-width: auto;
+    
+    &:hover {
+      transform: translateY(-1px);
+    }
+  }
 }
 
-.button {
-  margin: 0 !important;
+// Variables de color locales
+$purple-base: #6b46c1;
+$purple-light: #9f7aea;
+$purple-lighter: #e9d8fd;
+$purple-lightest: #faf5ff;
+$purple-dark: #553c9a;
+
+.button.is-purple {
+  background-color: $purple-base;
+  color: white;
+  border-color: transparent;
+
+  &.is-light {
+    background-color: $purple-lightest;
+    color: $purple-dark;
+    border-color: $purple-lighter;
+
+    &:hover {
+      background-color: $purple-lighter;
+      color: $purple-dark;
+    }
+  }
+
+  &:hover {
+    background-color: darken($purple-base, 5%);
+    color: white;
+  }
 }
 
 // Asegurarse que el contenido del body no se desplace
 :global(body.modal-open) {
   overflow: hidden;
+}
+
+// Agregar estilos específicos para los botones de habilidades
+.buttons.are-small {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+
+  .button {
+    margin: 0 !important;
+    transition: all 0.2s ease;
+    min-width: auto;
+    
+    &:hover {
+      transform: translateY(-1px);
+    }
+  }
+}
+
+// Mejorar la visualización del estado de carga
+.icon.is-large {
+  height: 3rem;
+  width: 3rem;
+  
+  i {
+    font-size: 1.5rem;
+  }
+}
+
+// Mejorar el mensaje de error
+.notification.is-danger.is-light {
+  margin-top: 0.5rem;
+  padding: 0.75rem;
 }
 </style> 

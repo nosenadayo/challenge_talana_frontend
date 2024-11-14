@@ -55,3 +55,10 @@ export class EmployeeStrategy extends ApiStrategy {
         return response.data;
     }
 }
+
+export class SkillStrategy extends ApiStrategy {
+  async execute(): Promise<ApiResponse> {
+    const response = await axios.get(`${this.baseUrl}/skills`);
+    return response.data;
+  }
+}
