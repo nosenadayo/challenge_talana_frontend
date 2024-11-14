@@ -2,7 +2,7 @@ import axios from 'axios';
 import { ApiResponse } from '../../types';
 
 abstract class ApiStrategy {
-    protected baseUrl = 'http://0.0.0.0:3000/api/v1';
+  protected baseUrl = import.meta.env.VITE_BACKEND_BASE_URL;
   abstract execute(id?: string): Promise<any>;
 }
 
@@ -54,4 +54,11 @@ export class EmployeeStrategy extends ApiStrategy {
         const response = await axios.get(`${this.baseUrl}/employees/${id}`);
         return response.data;
     }
+}
+
+export class SkillStrategy extends ApiStrategy {
+  async execute(): Promise<ApiResponse> {
+    const response = await axios.get(`${this.baseUrl}/skills`);
+    return response.data;
+  }
 }

@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend
+  namespace: argocd
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: frontend-service
+  template:
+    metadata:
+      labels:
+        app: frontend
+    spec:
+      containers:
+      - name: frontend
+        image: ghcr.io/nosenadayo/challenge_talana_frontend:latest
+        ports:
+        - containerPort: 80
+        env:
+        - name: VITE_BACKEND_BASE_URL
+          value: http://backend-service:3000
