@@ -70,63 +70,12 @@
     </div>
 
     <!-- Modal de detalle del día -->
-    <div class="modal" :class="{ 'is-active': selectedDate }">
-      <div class="modal-background" @click="selectedDate = null"></div>
-      <div class="modal-card">
-        <header class="modal-card-head">
-          <p class="modal-card-title">
-            Asignaciones para {{ formatDate(selectedDate) }}
-          </p>
-          <button 
-            class="delete" 
-            aria-label="close"
-            @click="selectedDate = null"
-          ></button>
-        </header>
-        <section class="modal-card-body">
-          <div v-if="selectedDateReport">
-            <!-- Resumen de asignaciones -->
-            <div class="box">
-              <h3 class="title is-5">Resumen</h3>
-              <div class="columns is-multiline">
-                <div class="column is-half">
-                  <p>Total asignaciones: {{ selectedDateReport.attributes.summary_stats.total_assignments }}</p>
-                </div>
-                <div class="column is-half">
-                  <p>Horas asignadas: {{ selectedDateReport.attributes.summary_stats.total_hours_assigned }}</p>
-                </div>
-              </div>
-            </div>
-
-            <!-- Lista de empleados y sus asignaciones -->
-            <div v-for="employee in selectedDateReport.attributes.employees_summary" 
-                 :key="employee.id"
-                 class="box">
-              <h4 class="title is-6">{{ employee.name }}</h4>
-              <p class="subtitle is-7">
-                {{ employee.total_hours }}/{{ employee.available_hours }} horas
-              </p>
-              
-              <div class="assignments-list">
-                <div v-for="task in employee.assignments" 
-                     :key="task.id"
-                     class="assignment-item">
-                  <p class="task-title">{{ task.title }}</p>
-                  <p class="task-hours">{{ task.estimated_hours }}h</p>
-                  <div class="tags are-small">
-                    <span v-for="skill in task.required_skills" 
-                          :key="skill"
-                          class="tag is-info is-light">
-                      {{ skill }}
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-      </div>
-    </div>
+    <DayDetailModal
+      :is-open="!!selectedDate"
+      :selected-date="selectedDate"
+      :report="selectedDateReport"
+      @close="selectedDate = null"
+    />
   </div>
 </template>
 
@@ -147,6 +96,7 @@ import {
 } from 'date-fns'
 import { es } from 'date-fns/locale'
 import { useAssignmentStore } from '../../stores/assignmentStore'
+import DayDetailModal from './DayDetailModal.vue'
 
 const currentDate = ref(new Date())
 const selectedDate = ref<Date | null>(null)

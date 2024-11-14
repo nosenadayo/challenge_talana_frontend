@@ -3,3 +3,35 @@ $purple: #6b46c1;
 $purple-light: #9f7aea;
 $purple-dark: #553c9a;
 $white: #ffffff; 
+
+// Paleta de púrpuras
+$purple-lighter: #f3e8ff;
+$purple-light: #e9d5ff;
+$purple: #a855f7;
+$purple-dark: #7e22ce;
+
+// Clases de utilidad
+.has-background-purple-lighter {
+  background-color: $purple-lighter !important;
+}
+
+.has-background-purple-light {
+  background-color: $purple-light !important;
+}
+
+.has-text-purple {
+  color: $purple !important;
+}
+
+.has-text-purple-dark {
+  color: $purple-dark !important;
+}
+
+.tag.is-purple {
+  background-color: $purple-light;
+  color: $purple-dark;
+  
+  &:hover {
+    background-color: darken($purple-light, 5%);
+  }
+} 

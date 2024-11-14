@@ -101,11 +101,13 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue'
+import { ref, computed, watch, onMounted } from 'vue'
+import { format } from 'date-fns'
 import { useTaskStore } from '../../stores/taskStore'
 
 const props = defineProps<{
-  isOpen: boolean
+  isOpen: boolean,
+  defaultDate?: Date | null
 }>()
 
 const emit = defineEmits<{
@@ -183,6 +185,20 @@ watch(() => props.isOpen, (newValue) => {
     document.body.classList.remove('modal-open')
   }
 })
+
+// Establecer la fecha por defecto cuando se monta el componente
+onMounted(() => {
+  if (props.defaultDate) {
+    formData.value.due_date = format(props.defaultDate, 'yyyy-MM-dd')
+  }
+})
+
+// También observar cambios en defaultDate por si el componente ya está montado
+watch(() => props.defaultDate, (newDate) => {
+  if (newDate) {
+    formData.value.due_date = format(newDate, 'yyyy-MM-dd')
+  }
+})
 </script>
 
 <style lang="scss" scoped>
@@ -196,7 +212,7 @@ watch(() => props.isOpen, (newValue) => {
   height: 100vh;
   display: flex;
   justify-content: flex-end;
-  z-index: 1000;
+  z-index: 1002;
 }
 
 .modal-backdrop {
@@ -207,6 +223,7 @@ watch(() => props.isOpen, (newValue) => {
   height: 100%;
   background-color: rgba(0, 0, 0, 0.5);
   backdrop-filter: blur(2px);
+  z-index: 1003;
 }
 
 .slider-panel {
@@ -216,7 +233,7 @@ watch(() => props.isOpen, (newValue) => {
   background-color: white;
   box-shadow: -2px 0 8px rgba(0, 0, 0, 0.1);
   overflow-y: auto;
-  z-index: 1001;
+  z-index: 1004;
 }
 
 .slider-header {
